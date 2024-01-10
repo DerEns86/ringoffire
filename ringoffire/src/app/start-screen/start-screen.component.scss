@@ -1,0 +1,21 @@
+section{
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    
+    background-image: url(../../assets/img/startscreen.jpg);
+    background-size: cover;
+    background-position: center;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    >img{
+        &:hover{
+            filter: brightness(1.75);
+            cursor: pointer;
+        }
+    }
+
+}
