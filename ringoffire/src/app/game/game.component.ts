@@ -2,54 +2,70 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Game } from '../../models/game';
 import { PlayerComponent } from '../player/player.component';
-import {MatIconModule} from '@angular/material/icon';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatButtonModule} from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatDialog
+} from '@angular/material/dialog';
+import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
+
+import {MatDialogModule} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule , GameComponent, PlayerComponent, MatButtonModule, MatDividerModule, MatIconModule],
+  imports: [CommonModule, GameComponent, PlayerComponent, MatIconModule, MatDividerModule, MatButtonModule, MatDialogModule],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss'
 })
-export class GameComponent implements OnInit{
+export class GameComponent implements OnInit {
   pickCardAnimation = false;
   currentCard: string = '';
   game!: Game;
-  constructor() {
-   
-    
+  constructor(public dialog: MatDialog) {
+
+
 
   }
 
-ngOnInit(): void {
-   this.newGame();
-}
+  ngOnInit(): void {
+    this.newGame();
+  }
 
-newGame(){
- this.game = new Game();
- console.log(this.game);
-}
+  newGame() {
+    this.game = new Game();
+    console.log(this.game);
+  }
 
   takeCard() {
-     if(!this.pickCardAnimation){   
-    let poppedCard = this.game.stack.pop();
-  if (poppedCard !== undefined) {
-    this.currentCard = poppedCard;
-    
-    console.log(this.currentCard);
-    console.log('played:' + this.game.playedCard);
-  } else {
-    console.log('Keine Karte mehr im Stapel.');
-  }
-    this.pickCardAnimation = true;
+    if (!this.pickCardAnimation) {
+      let poppedCard = this.game.stack.pop();
+      if (poppedCard !== undefined) {
+        this.currentCard = poppedCard;
 
-    setTimeout(() => {
-      this.game.playedCard.push(this.currentCard)
-      this.pickCardAnimation = false;
+        console.log(this.currentCard);
+        console.log('played:' + this.game.playedCard);
+      } else {
+        console.log('Keine Karte mehr im Stapel.');
+      }
+      this.pickCardAnimation = true;
 
-    }, 1000);
+      setTimeout(() => {
+        this.game.playedCard.push(this.currentCard)
+        this.pickCardAnimation = false;
+
+      }, 1000);
+    }
   }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogAddPlayerComponent);
+
+    dialogRef.afterClosed().subscribe((name:string) => {
+      console.log('The dialog was closed', name);
+      this.game.players.push(name);
+      console.log(this.game)
+    });
   }
 }
