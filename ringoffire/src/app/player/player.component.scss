@@ -3,7 +3,7 @@
     width: 300px;
     display: flex;
     align-items: center;
-    background-color: rgb(184, 94, 11);
+    background-color: rgb(182, 162, 143);
     border-bottom-left-radius: 50px;
     border-top-left-radius: 50px;
 
@@ -14,9 +14,16 @@
     }
 
     img {
-        width: 100px;
-        height: 100px;
+        width: 50px;
+        height: 50px;
         object-fit: cover;
         border-radius: 50%;
     }
+
+    
+}
+
+.player-active{
+    background-color: rgb(184, 94, 11) !important;
+    
 }
