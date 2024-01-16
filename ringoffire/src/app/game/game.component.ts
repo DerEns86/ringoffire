@@ -45,6 +45,9 @@ export class GameComponent implements OnInit {
       if (poppedCard !== undefined) {
         this.currentCard = poppedCard;
 
+        this.game.currentPlayer++;
+        this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
+
         console.log(this.currentCard);
         console.log('played:' + this.game.playedCard);
       } else {
@@ -65,8 +68,10 @@ export class GameComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((name:string) => {
       console.log('The dialog was closed', name);
+      if(name && name.length > 0){
       this.game.players.push(name);
       console.log(this.game)
+    }
     });
   }
 }
