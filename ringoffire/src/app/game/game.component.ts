@@ -32,7 +32,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.newGame();
-    
+    // console.log('getSingle: ',this.firebaseService.getSingleDocRef('test', 'JYlR6qw5D0Zp1CYYTlyE'));
   }
 
   ngOnDestroy(): void {
