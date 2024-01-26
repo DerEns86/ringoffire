@@ -1,30 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Game } from '../../models/game';
 import { PlayerComponent } from '../player/player.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MatDialog
-} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
 
 import {MatDialogModule} from '@angular/material/dialog';
 import { GameInfoComponent } from '../game-info/game-info.component';
+import { AppComponent } from '../app.component';
+import { FirebaseService } from '../firebase.service';
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule, GameComponent, PlayerComponent, GameInfoComponent , MatIconModule, MatDividerModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, AppComponent , GameComponent, PlayerComponent, GameInfoComponent , MatIconModule, MatDividerModule, MatButtonModule, MatDialogModule],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss'
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   pickCardAnimation = false;
   currentCard: string = '';
   game!: Game;
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, public firebaseService: FirebaseService) {
 
 
 
@@ -32,11 +32,19 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
     this.newGame();
+    
+  }
+
+  ngOnDestroy(): void {
+    this.firebaseService.snapShotGameList();
   }
 
   newGame() {
     this.game = new Game();
     console.log(this.game);
+
+    this.firebaseService.snapShotGameList();
+    console.log('unsub form game: ', this.firebaseService.snapShotGameList())
   }
 
   takeCard() {
