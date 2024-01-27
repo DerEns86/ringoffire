@@ -12,6 +12,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { GameInfoComponent } from '../game-info/game-info.component';
 import { AppComponent } from '../app.component';
 import { FirebaseService } from '../firebase.service';
+import { Firestore } from '@angular/fire/firestore/firebase';
 
 @Component({
   selector: 'app-game',
@@ -32,19 +33,22 @@ export class GameComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.newGame();
-    // console.log('getSingle: ',this.firebaseService.getSingleDocRef('test', 'JYlR6qw5D0Zp1CYYTlyE'));
+    console.log(this.firebaseService.getSingleDocRef('games', 'nZfTqIVxT4niY9k72zmO'));
   }
 
   ngOnDestroy(): void {
-    this.firebaseService.snapShotGameList();
+   
+  }
+
+  test(){
+    this.firebaseService.addGame({game: 'gameTest'});
+    console.log('test');
   }
 
   newGame() {
     this.game = new Game();
     console.log(this.game);
 
-    this.firebaseService.snapShotGameList();
-    console.log('unsub form game: ', this.firebaseService.snapShotGameList())
   }
 
   takeCard() {

@@ -1,11 +1,18 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, addDoc, collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import {
+  Firestore, addDoc, collection, doc, onSnapshot, setDoc,
+  updateDoc, deleteDoc, collectionData
+} from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
 
+  games$ :any;
+  games :any;
+  gamesList: string[] = [];
   firestore = inject(Firestore);
   // unsubList;
   constructor() {
@@ -24,12 +31,21 @@ export class FirebaseService {
     //         -> Datenbankzugriff-<
   }
 
+  subGameList() {
+    this.games$ = collectionData(this.getGamesRef());
+    this.games = this.games$.subscribe((list:any) => {
+      list.forEach((element: any) => {
+        console.log('from service: ', element);
+      });
+    });
+  }
+
 
   snapShotGameList() {
     onSnapshot(this.getGamesRef(), (list) => {
       list.forEach(element => {
-        console.log('from service-id:', element.id);
-        console.log('from service-data:', element.data()['game']);
+
+        console.log('from snapshot:', element.id);
       });
     })
 
