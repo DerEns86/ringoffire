@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
 
-import {MatDialogModule} from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { GameInfoComponent } from '../game-info/game-info.component';
 import { AppComponent } from '../app.component';
 import { FirebaseService } from '../firebase.service';
@@ -19,16 +19,17 @@ import { doc, docData } from '@angular/fire/firestore';
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule, AppComponent , GameComponent, PlayerComponent, GameInfoComponent , MatIconModule, MatDividerModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, AppComponent, GameComponent, PlayerComponent, GameInfoComponent, MatIconModule, MatDividerModule, MatButtonModule, MatDialogModule],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss'
 })
 export class GameComponent implements OnInit, OnDestroy {
-  
-  pickCardAnimation = false;
-  currentCard: string = '';
+
+
   game!: Game;
-  gameId:string = '';
+  gameId: string = '';
+  pickCardAnimation: any;
+  currentCard: any;
   constructor(public route: ActivatedRoute, public dialog: MatDialog, public firebaseService: FirebaseService) {
 
 
@@ -37,17 +38,19 @@ export class GameComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.route.params.subscribe((params)=>{
-      console.log('params: ',params['id']);
+    this.route.params.subscribe((params) => {
+      console.log('params: ', params['id']);
       this.gameId = params['id'];
       this.firebaseService.snapShotGameList();
-      let docRef = doc(this.firebaseService.firestore, 'games',params['id']);
+      let docRef = doc(this.firebaseService.firestore, 'games', params['id']);
       docData(docRef).subscribe(game => {
         if (game) {
           this.game.stack = game['stack'];
           this.game.currentPlayer = game['currentPlayer'];
           this.game.playedCard = game['playedCard'];
           this.game.players = game['players'];
+          this.game.currentCard = game['currentCard'];
+          this.game.pickCardAnimation = game['pickCardAnimation']
         }
       });
     })
@@ -59,14 +62,14 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-   this.firebaseService.snapShotGameList();
+    this.firebaseService.snapShotGameList();
   }
 
-  saveGame(){
+  saveGame() {
     this.firebaseService.updateGame(this.gameId, this.game.toJSon())
   }
 
-  test(){
+  test() {
 
     // ein neues spiel wird erstellt
     this.firebaseService.addGame(this.game.toJSon());
@@ -80,27 +83,29 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   takeCard() {
-    if (!this.pickCardAnimation) {
-      let poppedCard = this.game.stack.pop();
-      this.saveGame();
-      if (poppedCard !== undefined) {
-        this.currentCard = poppedCard;
 
+    if (!this.game.pickCardAnimation) {
+      let poppedCard = this.game.stack.pop();
+
+      if (poppedCard !== undefined) {
+        this.game.currentCard = poppedCard;
+       
         this.game.currentPlayer++;
         this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
 
-        console.log(this.currentCard);
+        console.log(this.game.currentCard);
+        console.log(this.game.currentPlayer);
         console.log('played:' + this.game.playedCard);
       } else {
         console.log('Keine Karte mehr im Stapel.');
       }
-      this.pickCardAnimation = true;
-
+      this.game.pickCardAnimation = true;
+      this.saveGame();
       setTimeout(() => {
-        this.game.playedCard.push(this.currentCard)
-        this.saveGame();
-        this.pickCardAnimation = false;
+        this.game.playedCard.push(this.game.currentCard)
 
+        this.game.pickCardAnimation = false;
+        this.saveGame();
       }, 1000);
     }
   }
@@ -108,13 +113,13 @@ export class GameComponent implements OnInit, OnDestroy {
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAddPlayerComponent);
 
-    dialogRef.afterClosed().subscribe((name:string) => {
+    dialogRef.afterClosed().subscribe((name: string) => {
       console.log('The dialog was closed', name);
-      if(name && name.length > 0){
-      this.game.players.push(name);
-      this.saveGame();
-      console.log(this.game)
-    }
+      if (name && name.length > 0) {
+        this.game.players.push(name);
+        this.saveGame();
+        console.log(this.game)
+      }
     });
   }
 }
