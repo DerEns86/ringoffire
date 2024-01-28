@@ -21,6 +21,7 @@ export class FirebaseService {
 
   }
 
+  // #######  get ####################
 
   getGamesRef() {
     return collection(this.firestore, 'games');
@@ -29,15 +30,6 @@ export class FirebaseService {
   getSingleDocRef(colId: string, docId: string) {
     return doc(collection(this.firestore, colId), docId)
     //         -> Datenbankzugriff-<
-  }
-
-  subGameList() {
-    this.games$ = collectionData(this.getGamesRef());
-    this.games = this.games$.subscribe((list:any) => {
-      list.forEach((element: any) => {
-        console.log('from service: ', element);
-      });
-    });
   }
 
 
@@ -49,6 +41,18 @@ export class FirebaseService {
       });
     })
 
+  }
+
+
+  // ##############################################
+
+  subGameList() {
+    this.games$ = collectionData(this.getGamesRef());
+    this.games = this.games$.subscribe((list:any) => {
+      list.forEach((element: any) => {
+        console.log('from service: ', element);
+      });
+    });
   }
 
   async addGame(item: {}) {

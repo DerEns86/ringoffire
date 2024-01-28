@@ -13,6 +13,7 @@ import { GameInfoComponent } from '../game-info/game-info.component';
 import { AppComponent } from '../app.component';
 import { FirebaseService } from '../firebase.service';
 import { Firestore } from '@angular/fire/firestore/firebase';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -22,26 +23,34 @@ import { Firestore } from '@angular/fire/firestore/firebase';
   styleUrl: './game.component.scss'
 })
 export class GameComponent implements OnInit, OnDestroy {
+  
   pickCardAnimation = false;
   currentCard: string = '';
   game!: Game;
-  constructor(public dialog: MatDialog, public firebaseService: FirebaseService) {
+  constructor(public route: ActivatedRoute, public dialog: MatDialog, public firebaseService: FirebaseService) {
 
 
 
   }
 
   ngOnInit(): void {
+
+    this.route.params.subscribe((params)=>{
+      console.log('params: ',params['id']);
+    })
+
     this.newGame();
-    console.log(this.firebaseService.getSingleDocRef('games', 'nZfTqIVxT4niY9k72zmO'));
+    // console.log(this.firebaseService.getSingleDocRef('games', 'nZfTqIVxT4niY9k72zmO'));
+    console.log(this.firebaseService.snapShotGameList());
+    // this.test();
   }
 
   ngOnDestroy(): void {
-   
+   this.firebaseService.snapShotGameList();
   }
 
   test(){
-    this.firebaseService.addGame({game: 'gameTest'});
+    this.firebaseService.addGame(this.game.toJSon());
     console.log('test');
   }
 
